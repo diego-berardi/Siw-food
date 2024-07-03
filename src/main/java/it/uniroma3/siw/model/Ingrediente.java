@@ -15,6 +15,7 @@ public class Ingrediente {
 	private int quantita;
 	
 	private String misura;
+
 	@ManyToMany(mappedBy="ingredienti")
 	private List<Ricetta> ricette;
 	

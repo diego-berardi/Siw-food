@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cuoco</title>
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/carousell.css" />
+    <link rel="stylesheet" href="/css/cuoco.css" />
+    <link rel="stylesheet" href="/css/cuocoProfilePage.css" />
+
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+        <a href="/" class="logo">
+          <h1>SiwFood</h1>
+        </a>
+        <i class="bx bx-menu toggle-menu-btn" id="menu-icon"></i>
+
+        <ul class="navbar">
+          <li><a class="link" href="/">Home</a></li>
+          <li><a class="link" href="/ricette">Ricette</a></li>
+          <li><a class="link" href="/cuochi">Cuochi</a></li>
+          <a class="link" th:if="${userDetails}" href="/logout">
+            <i class="bx bxs-log-out header-icon"></i>
+          </a>
+          <a class="link" th:unless="${userDetails}" href="/login">
+            <i class="bx bxs-log-in header-icon"></i>
+          </a>
+
+          <a href="/profilePage">
+            <li th:if="${currentCuoco}" class="profile-image">
+              <img
+                th:src="@{'data:image/jpeg;base64,'+${currentCuoco.profileImage.generateBase64Image()}}"
+                alt="immagine del professore"
+              />
+            </li>
+          </a>
+          <div th:if="${userDetails}">
+            <a href="/profilePage">
+              <li th:if="${admin}" class="profile-image-user">
+                <img
+                  src="/images/userProfileImg.png"
+                  alt="immagine del professore"
+                />
+              </li>
+            </a>
+          </div>
+          <div th:if="${userDetails}">
+            <a href="/profilePage">
+              <li th:if="${user}" class="profile-image-user">
+                <img
+                  src="/images/userProfileImg.png"
+                  alt="immagine del cuoco"
+                />
+              </li>
+            </a>
+          </div>
+        </ul>
+      </div>
+      <ul class="navbar mobile-menu">
+        <li><a class="link" href="/">Home</a></li>
+        <li><a class="link" href="/ricette">Ricette</a></li>
+        <li><a class="link" href="/Cuochi">Cuochi</a></li>
+        <a class="link" th:if="${userDetails}" href="/logout">
+          <i class="bx bxs-log-out header-icon"></i>
+        </a>
+        <a class="link" th:unless="${userDetails}" href="/login">
+          <i class="bx bxs-log-in header-icon"></i>
+        </a>
+
+        <a href="/profilePage">
+          <li th:if="${cuoco}" class="profile-image">
+            <img
+              th:src="@{'data:image/jpeg;base64,'+${cuoco.profileImage.generateBase64Image()}}"
+              alt="immagine del professore"
+            />
+          </li>
+        </a>
+        <div th:if="${userDetails}">
+          <a href="/profilePage">
+            <li th:if="${admin}" class="profile-image-user">
+              <img src="/images/userProfileImg.png" alt="immagine del cuoco" />
+            </li>
+          </a>
+        </div>
+        <div th:if="${userDetails}">
+          <a href="/profilePage">
+            <li th:if="${user}" class="profile-image-user">
+              <img src="/images/userProfileImg.png" alt="immagine del cuoco" />
+            </li>
+          </a>
+        </div>
+      </ul>
+    </header>
+
+    <section class="dettagli-section" th:if="${cuoco}">
+      <h2
+        th:text="${cuoco.nome}+' '+ ${cuoco.cognome}"
+        style="color: var(--pink)"
+        class="dettagli-section-title"
+      ></h2>
+      <div class="professor-container">
+        <div class="image-container">
+          <img
+            class="professor-image"
+            th:src="@{'data:image/jpeg;base64,'+${cuoco.profileImage.generateBase64Image()}}"
+            alt="immagine del cuoco"
+          />
+        </div>
+
+        <div
+          style="border-radius: 30px; padding: 0; border: none"
+          class="info-container"
+        >
+          <div class="div-info-border-blue">
+            <p
+              class=""
+              style="font-size: 1.5rem"
+              th:text="'Nome: '+ ${cuoco.nome}"
+            ></p>
+          </div>
+          <div class="div-info-border-blue">
+            <p th:text="'Cognome: '+ ${cuoco.cognome}"></p>
+          </div>
+          <div class="div-info-border-blue">
+            <p th:text="'Email: '+ ${cuoco.email}"></p>
+          </div>
+          <div class="div-info-border-blue">
+            <p th:text="'Data di nascita: '+ ${cuoco.dataDiNascita}"></p>
+          </div>
+          <div class="div-info-border-blue">
+            <p>Descrizione:</p>
+            <p th:text="${cuoco.descrizione}"></p>
+          </div>
+          <div
+            th:unless="${#lists.isEmpty(subjects)}"
+            class="div-info-border-blue"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <section th:unless="${#lists.isEmpty(cuoco.ricette)}" class="first-section">
+      <h2 style="font-size: 2rem; margin: 7rem 0 1rem 0; color: var(--pink)">
+        Ricette
+      </h2>
+      <ul class="carousell-container">
+        <li th:each="ricetta: ${cuoco.ricette}">
+          <a th:href="@{'/ricetta + '/' + ${ricetta.id}}">
+            <div class="carousell-widget" style="padding: 0; padding-right: 0">
+              <div class="carousell-widget-image-container">
+                <img
+                  th:src="@{'data:image/jpeg;base64,'+${ricetta.getCopertina.generateBase64Image()}}"
+                  alt="immagine della ricceta"
+                />
+              </div>
+              <div class="carousell-widget-info">
+                <span style="display: flex; align-items: center; gap: 0.3rem">
+                  <h3 style="font-size: 2rem" th:text="${ricetta.nome}"></h3>
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.3rem">
+                  <i class="bx bxs-envelope"></i>
+                  <p th:text="'tipologia: '+${ricetta.tipologia}"></p>
+                </span>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <span style="height: 30vh"></span>
+  </body>
+  <script src="/js/app.js"></script>
+</html>

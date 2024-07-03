@@ -1,0 +1,67 @@
+.home {
+  width: 100%;
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  gap: 1.5rem;
+  margin-top: 110px;
+}
+
+.home-text h1 {
+  font-size: 3.4rem;
+  color: var(--pink);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.home-text p {
+  font-size: 0.938rem;
+  color: black;
+  margin: 0.5rem 0 1.4rem;
+}
+
+.about {
+  display: flex;
+  flex-direction: column-reverse;
+
+  gap: 1.5rem;
+}
+
+.about-img img {
+  border-radius: 0.5rem;
+}
+
+.about-text h2 {
+  font-size: 1.8rem;
+  text-transform: uppercase;
+}
+
+.about-text p {
+  font-size: 0.926rem;
+  margin: 1rem 0 1.1rem;
+}
+
+.heading {
+  text-align: center;
+}
+
+.heading h2 {
+  font-size: 1.8rem;
+  text-transform: uppercase;
+}
+
+@media only screen and (min-width: 800px) {
+  .home {
+    flex-direction: row;
+    margin: 0;
+  }
+  .about {
+    flex-direction: row;
+  }
+}

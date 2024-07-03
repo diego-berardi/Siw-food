@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sing up</title>
+    <link rel="stylesheet" href="/css/global.css" />
+    <link rel="stylesheet" href="/css/authPage.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+        <a href="/" class="logo">
+          <h1>Lezioni Expert</h1>
+        </a>
+        <i class="bx bx-menu toggle-menu-btn" id="menu-icon"></i>
+
+        <ul class="navbar">
+          <li><a class="link" href="/">Home</a></li>
+          <li><a class="link" href="/ricetta">Ricette</a></li>
+          <li><a class="link" href="/cuochi">Cuoco</a></li>
+          <a class="link" th:if="${userDetails}" href="/logout">
+            <i class="bx bxs-log-out header-icon"></i>
+          </a>
+          <a class="link" th:unless="${userDetails}" href="/login">
+            <i class="bx bxs-log-in header-icon"></i>
+          </a>
+        </ul>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="form-container">
+        <h1 class="title">Registra Cuoco</h1>
+        <form
+          th:action="@{/admin/aggiungiCuoco}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="input-div">
+            <input
+              class="input input-username"
+              type="text"
+              placeholder="Nome..."
+              required
+              th:field="${cuoco.nome}"
+            />
+            <span
+              th:if="${#fields.hasErrors('cuoco.nome')}"
+              th:errors="${cuoco.nome}"
+              th:style="'color:red'"
+            >
+            </span>
+          </div>
+          <div class="input-div">
+            <input
+              class="input input-username"
+              type="text"
+              placeholder="Cognome..."
+              required
+              th:field="${cuoco.cognome}"
+            />
+            <span
+              th:if="${#fields.hasErrors('cuoco.cognome')}"
+              th:errors="${cuoco.cognome}"
+              th:style="'color:red'"
+            >
+            </span>
+          </div>
+          <div class="input-div">
+            <input
+              class="input"
+              type="text"
+              placeholder="Email..."
+              required
+              th:field="${cuoco.email}"
+            />
+            <span
+              th:if="${#fields.hasErrors('cuoco.email')}"
+              th:errors="${cuoco.email}"
+              th:style="'color:red'"
+            >
+            </span>
+          </div>
+          <div class="input-div">
+            <input
+              class="input"
+              type="date"
+              name="dataDiNascita"
+              placeholder="gg/mm/aaaa"
+              required
+              th:field="${cuoco.dataDiNascita}"
+            />
+            <span
+              th:if="${#fields.hasErrors('cuoco.dataDiNascita')}"
+              th:errors="${cuoco.dataDiNascita}"
+              th:style="'color:red'"
+            >
+            </span>
+          </div>
+
+          <div class="input-div">
+            <textarea
+              name="description"
+              class="input"
+              placeholder="Descrizione..."
+              th:field="${cuoco.descrizione}"
+            ></textarea>
+            <span
+              th:if="${#fields.hasErrors('cuoco.dataDiNascita')}"
+              th:errors="${cuoco.dataDiNascita}"
+              th:style="'color:red'"
+            >
+            </span>
+          </div>
+          <label for="file-upload" class="custom-file-upload">
+            Scegli File
+          </label>
+          <span
+            ><input
+              name="file"
+              type="file"
+              id="file-upload"
+              accept="image/png , image/jpeg"
+              required
+              style="display: none"
+              onchange="updateFileName(this)"
+          /></span>
+          <div style="height: 10px"></div>
+          <div class="btn-div">
+            <button class="btn-form btn-login" type="submit">
+              Aggiungi cuoco
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script>
+    function updateFileName(input) {
+      var fileName = input.files[0].name;
+      var label = document.querySelector(".custom-file-upload");
+      label.textContent = fileName;
+    }
+  </script>
+  <script src="/js/app.js"></script>
+</html>

@@ -43,5 +43,122 @@ public class CuocoController {
 	@Autowired private ImageRepository imageRepository;
 
 
+	@GetMapping("/cuochi")
+	public String getCuochi(Model model){
+				UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
+		if(credentials.getCuoco()!=null) {
+			model.addAttribute("cuoco", credentials.getCuoco());
+		}else {
+			if(credentials.getRole().equals(Credentials.ADMIN_ROLE)) {
+				model.addAttribute("admin",credentials.getRole());
+			}else {
+				model.addAttribute("user",credentials.getRole());
+			}
+		}
+		model.addAttribute("cuochi", this.cuocoRepository.findAll());
+		return "cuochi.html";
+	}
+	
 
+	@GetMapping("/cuoco/{id}")
+	public String getMovie(@PathVariable Long id, Model model) {
+		UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
+		if(credentials.getCuoco()!=null) {
+			model.addAttribute("currentCuoco", credentials.getCuoco());
+		}else {
+			if(credentials.getRole().equals(Credentials.ADMIN_ROLE)) {
+				model.addAttribute("admin",credentials.getRole());
+			}else {
+				model.addAttribute("user",credentials.getRole());
+			}
+		}
+		model.addAttribute("cuoco", this.cuocoRepository.findById(id).get());
+		if(credentials.getRole().equals(Credentials.CUOCO_ROLE)) {
+			model.addAttribute("cuocoRole", credentials.getRole());
+			return "cuoco.html";
+		}else {
+			if(credentials.getRole().equals(Credentials.ADMIN_ROLE)) {
+				model.addAttribute("adminRole", credentials.getRole());
+				return "cuocoEditable.html";
+			}
+		}
+		model.addAttribute("userRole", credentials.getRole());
+		return "cuoco.html";
+	}	
+
+	@GetMapping(value = "/profilePage") 
+	public String getProfilePage(Model model) {
+		UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
+		if (credentials.getRole().equals(Credentials.CUOCO_ROLE)) {
+			// model.addAttribute("professor", credentials.getRole());
+			Cuoco p= this.cuocoRepository.findById(credentials.getCuoco().getId()).get();
+			model.addAttribute("ricette", p.getRicette());
+			model.addAttribute("cuoco", this.cuocoRepository.findById(credentials.getCuoco().getId()).get());
+			return "cuocoProfilePage.html";
+		}else if(credentials.getRole().equals(Credentials.DEFAULT_ROLE)){
+			model.addAttribute("user", credentials.getRole());
+			model.addAttribute("user", this.userRepository.findById(credentials.getUser().getId()).get());
+			return "userProfilePage.html";
+		}else {
+			model.addAttribute("admin", credentials.getRole());
+			model.addAttribute("user", this.userRepository.findById(credentials.getUser().getId()).get());
+			return "adminProfilePage.html";
+		}
+	}
+	
+	
+	@GetMapping("/admin/eliminaCuoco/{idCuoco}")
+	public String cancellaCuoco(@PathVariable("idCuoco") Long idCuoco, Model model) {
+		UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
+		Cuoco cuoco = this.cuocoRepository.findById(idCuoco).get();
+		List<Ricetta> ricette = cuoco.getRicette();
+		for(Ricetta r: ricette) {
+			r.setCuoco(null);
+		}
+	    this.cuocoRepository.save(cuoco);
+		Iterable<Credentials> allCredentials = this.credentialsRepository.findAll();
+		for(Credentials i: allCredentials) {
+			if(i.getCuoco() != null) {
+				if(i.getCuoco().getId() == idCuoco) {
+					if(!i.getRole().equals(Credentials.ADMIN_ROLE)) {
+		                i.setCuoco(null);
+		                this.credentialsRepository.delete(i);
+		            }
+				}
+			}
+		}
+		this.cuocoRepository.delete(cuoco);
+		model.addAttribute("user", this.userRepository.findById(credentials.getUser().getId()).get());
+		return "adminProfilePage.html";
+	}
+	
+
+	@GetMapping(value="/admin/formNewCuoco")
+	public String formNewCuoco(Model model) {
+		model.addAttribute("cuoco", new Cuoco());
+		return "admin/formNewCuoco.html";
+	}
+
+	@PostMapping(value={"/admin/aggiungiCuoco"},consumes = "multipart/form-data")
+	public String newCuoco(@Valid @ModelAttribute Cuoco cuoco,@RequestPart("file") MultipartFile file, BindingResult bindingResult, Model model) {
+		//		this.movieValidator.validate(movie, bindingResult);
+		if (!bindingResult.hasErrors()) {
+			try {
+				Image i=new Image();
+				i.setImageData(file.getBytes());
+				cuoco.setProfileImage(i);
+				this.imageRepository.save(i);
+			} catch (Exception e) {
+				System.out.println("erroreeee");
+			}
+			this.cuocoRepository.save(cuoco);
+			return "redirect:/cuoco/"+cuoco.getId();
+		} else {
+			return "admin/formNewCuoco.html"; 
+		}
+	}
 }

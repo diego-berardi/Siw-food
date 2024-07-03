@@ -1,7 +1,4 @@
 package it.uniroma3.siw.controller;
-
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,8 +32,7 @@ public class AuthenticationController {
 	@Autowired private CuocoService cuocoService;
 	@Autowired private ImageRepository imageRepository;
 	
-	
-	/*GET DELLA HOME PAGE*/
+
 	@GetMapping(value = "/") 
 	public String index(Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -46,20 +42,109 @@ public class AuthenticationController {
 		else {		
 			UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
-			if (credentials.getRole().equals(Credentials.ADMIN_ROLE)) {
+			if (credentials.getCuoco()!=null) {
+				model.addAttribute("cuoco", credentials.getCuoco());
 				return "index.html";
+			}else {
+				if(credentials.getRole().equals(Credentials.ADMIN_ROLE)) {
+					model.addAttribute("admin", credentials.getUser());
+				}else {
+					model.addAttribute("user", credentials.getUser());
+				}
 			}
 		}
         return "index.html";
 	}
+
+
+	@GetMapping(value = "/login") 
+	public String showLoginForm (Model model) {
+		return "loginPage.html";
+	}
 	
 
+	@GetMapping(value = "/register") 
+	public String showRegisterForm (Model model) {
+		model.addAttribute("user", new User());
+		model.addAttribute("credentials", new Credentials());
+		return "registerUser.html";
+	}
 	
-//	@GetMapping("/errore")
-//	public String getErrore() {
-//		return "errore.html";
-//	}
+	@PostMapping(value = { "/register" })
+    public String registerUser(@Valid @ModelAttribute User user,
+                 BindingResult userBindingResult, @Valid
+                 @ModelAttribute Credentials credentials,
+                 BindingResult credentialsBindingResult,
+                 Model model) {
+
+		// se user e credential hanno entrambi contenuti validi, memorizza User e the Credentials nel DB
+        if(!userBindingResult.hasErrors() && !credentialsBindingResult.hasErrors()) {
+            userService.saveUser(user);
+            credentials.setUser(user);
+            credentialsService.saveCredentials(credentials);
+            model.addAttribute("user", user);
+            return "logInPage.html";
+        }
+        return "registerUser.html";
+    }
 	
+	/*GET DELLA PAGINA PER REGISTRARE I DATI E POST PER INSERIRE I DATI NEL DB DI UN PROFESSORE*/
+	@GetMapping(value = {"/registerCuoco"}) 
+	public String showRegisterFormCuoco (Model model) {
+		model.addAttribute("cuoco", new Cuoco());
+		model.addAttribute("credentials", new Credentials() );
+		return "registerCuoco.html";
+	}
+	
+	@PostMapping(value = { "/registerCuoco" },consumes = "multipart/form-data")
+    public String registerCuoco(@Valid @ModelAttribute Cuoco cuoco,@RequestPart("file") MultipartFile file,
+                 BindingResult userBindingResult, @Valid
+                 @ModelAttribute Credentials credentials,
+                 BindingResult credentialsBindingResult,
+                 Model model) {
+
+		// se user e credential hanno entrambi contenuti validi, memorizza User e the Credentials nel DB
+        if(!userBindingResult.hasErrors() && !credentialsBindingResult.hasErrors()) {
+        	try {
+				Image image=new Image();
+				image.setImageData(file.getBytes());
+				cuoco.setProfileImage(image);
+				this.imageRepository.save(image);
+			} catch (Exception e) {
+				System.out.println("erroreeee");
+			}
+            cuocoService.saveCuoco(cuoco);
+            credentials.setCuoco(cuoco);
+            credentialsService.saveCredentials(credentials);
+            model.addAttribute("cuoco", cuoco);
+            return "logInPage.html";
+        }
+        return "registerCuoco.html";
+    }
+	
+	/*GET CHE MOSTRA LA HOME PAGE DOPO LOG IN*/
+	@GetMapping(value = "/success")
+    public String defaultAfterLogin(Model model) {
+        
+    	UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    	Credentials credentials = credentialsService.getCredentials(userDetails.getUsername());
+    	if(credentials.getRole()!=null) {
+	    	if (credentials.getCuoco()!=null) {
+	    		model.addAttribute("cuoco", credentials.getCuoco());
+	    		return "index.html";
+	        }else {
+				if(credentials.getRole().equals(Credentials.ADMIN_ROLE)) {
+					model.addAttribute("admin",credentials.getRole());
+				}else {
+					model.addAttribute("user",credentials.getRole());
+				}
+			}
+    	}
+        return "index.html";
+    }
+	
+	
+
 	
 	
 }

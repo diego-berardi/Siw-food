@@ -1,0 +1,30 @@
+.carousell-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  /* justify-content: center; */
+}
+
+.carousell-widget {
+  /* border: ; */
+
+  border: var(--blue) 2px solid;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 1.5rem 2rem;
+  min-width: 250px;
+}
+
+.carousell-widget-image-container {
+  max-width: 300px;
+  min-width: 180px;
+  max-height: 250px;
+  min-height: 180px;
+  overflow: hidden;
+}
+
+.carousell-widget-info {
+  padding: 1rem;
+}

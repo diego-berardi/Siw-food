@@ -3,14 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SiwFood</title>
+    <title>New Announcement</title>
     <link rel="stylesheet" href="/css/global.css" />
-    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/authPage.css" />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
     />
   </head>
+
   <body>
     <header>
       <div class="header-container">
@@ -63,7 +64,7 @@
       <ul class="navbar mobile-menu">
         <li><a class="link" href="/">Home</a></li>
         <li><a class="link" href="/ricette">Ricette</a></li>
-        <li><a class="link" href="/Cuochi">Cuochi</a></li>
+        <li><a class="link" href="/cuochi">Cuochi</a></li>
         <a class="link" th:if="${userDetails}" href="/logout">
           <i class="bx bxs-log-out header-icon"></i>
         </a>
@@ -95,82 +96,76 @@
         </div>
       </ul>
     </header>
-    <section class="home" id="home">
-      <div class="home-text">
-        <h1>
-          Unisciti a noi <br />
-          e scopri <br />
-          le nostre ricette
-        </h1>
-        <p>
-          Scopri i migliori professori per ripetizioni personalizzate in tutte
-          le materie. <br />Prenota lezioni private online o in presenza e
-          migliora i tuoi risultati scolastici con l'aiuto di<br />
-          esperti qualificati.
-        </p>
-        <a href="/login" class="btn-bg-red-hover-reddish">Scopri di più</a>
-        <a href="/login" class="btn-bg-trs-hover-red">Diventa cuoco</a>
-      </div>
-      <div class="home-img">
-        <img
-          style="width: 100%; max-width: 400px"
-          src="/images/remiImg.png"
-          alt=""
-        />
-      </div>
-    </section>
 
-    <!-- <section class="about" id="about">
-      <div class="about-img">
-        <img
-          style="width: 100%; max-width: 600px"
-          src="/images/secondaImgHome.jpg"
-          alt=""
-        />
-      </div>
-      <div class="about-text">
-        <h2 style="color: #fe4e5c; font-weight: bold">Chi Siamo</h2>
-        <p>
-          Benvenuti su
-          <a
-            style="
-              text-transform: uppercase;
-              font-weight: bolder;
-              color: #fe4e5c;
-            "
-            >Lezioni Expert</a
-          >, la piattaforma che connette <br />studenti con i migliori tutor
-          qualificati. Offriamo supporto <br />
-          educativo di alta qualità per soddisfare le esigenze di ogni
-          <br />studente.
-        </p>
-        <a href="/login" class="btn-bg-trs-hover-red">Scopri di più</a>
-        <a href="/login" class="btn-bg-trs-hover-red"
-          >Diventa un nostro cuoco</a
+    <div class="container">
+      <div class="form-container">
+        <h1 class="title">Aggiungi Ricetta</h1>
+        <form
+          class="form"
+          th:action="@{/formNewRicetta}"
+          method="POST"
+          th:object="${ricetta}"
+          enctype="multipart/form-data"
         >
+          <div class="input-div">
+            <input
+              type="text"
+              class="input input-username"
+              th:field="${ricetta.nome}"
+              placeholder="nome..."
+            />
+          </div>
+          <div class="input-div">
+            <input
+              type="number"
+              class="input input-username"
+              th:field="${ricetta.tempoPreparazioneTot}"
+              placeholder="Tempo di preparazione..."
+            />
+          </div>
+          <div class="input-div">
+            <input
+              type="text"
+              class="input input-username"
+              th:field="${ricetta.tipologia}"
+              placeholder="Tipologia..."
+            />
+          </div>
+          <div class="input-div">
+            <textarea
+              name="description"
+              class="input"
+              placeholder="Descrizione..."
+              th:field="${ricetta.descrizione}"
+            ></textarea>
+          </div>
+
+          <label for="file-upload" class="custom-file-upload">
+            Scegli File
+          </label>
+          <span
+            ><input
+              name="file"
+              type="file"
+              id="file-upload"
+              accept="image/png , image/jpeg"
+              required
+              style="display: none"
+              onchange="updateFileName(this)"
+          /></span>
+          <div style="height: 10px"></div>
+
+          <button class="btn-form btn-login" type="submit">Conferma</button>
+        </form>
       </div>
-    </section> -->
+    </div>
   </body>
   <script>
-    console.log("hello");
-
-    const toggleMenuBtn = document.querySelector(".toggle-menu-btn");
-    const mobileMenu = document.querySelector(".mobile-menu");
-    mobileMenu.style.display = "none";
-    let isDisplayNone = true;
-
-    console.log(toggleMenuBtn);
-    console.log(mobileMenu);
-
-    toggleMenuBtn.addEventListener("click", () => {
-      console.log("pressed", isDisplayNone);
-      if (isDisplayNone) {
-        mobileMenu.style.display = "flex";
-        isDisplayNone = false;
-      } else {
-        mobileMenu.style.display = "none";
-        isDisplayNone = true;
-      }
-    });
+    function updateFileName(input) {
+      var fileName = input.files[0].name;
+      var label = document.querySelector(".custom-file-upload");
+      label.textContent = fileName;
+    }
   </script>
+  <script src="/js/app.js"></script>
 </html>

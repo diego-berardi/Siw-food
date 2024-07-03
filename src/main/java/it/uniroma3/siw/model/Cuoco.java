@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+// import jakarta.validation.constraints.NotNull;
 @Entity
 public class Cuoco {
 	@Id
@@ -17,13 +17,22 @@ public class Cuoco {
 	private String cognome;
 	@NotBlank
 	private String email;
+
 	private LocalDate  dataDiNascita;
+
 	@Column(length=2000)
 	private String descrizione;
 	
 	@OneToOne
-	private Image copertina;
+	private Image profileImage;
 	
+	public Image getProfileImage() {
+		return profileImage;
+	}
+	public void setProfileImage(Image profileImage) {
+		this.profileImage = profileImage;
+	}
+
 	@OneToMany(mappedBy="cuoco")
 	private List<Ricetta> ricette;
 	
@@ -40,12 +49,6 @@ public class Cuoco {
 		this.email = email;
 	}
 	
-	public Image getCopertina() {
-		return copertina;
-	}
-	public void setCopertina(Image copertina) {
-		this.copertina = copertina;
-	}
 	
 	public Long getId() {
 		return id;

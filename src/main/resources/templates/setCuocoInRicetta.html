@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SiwFood</title>
+    <title>Cuochi</title>
     <link rel="stylesheet" href="/css/global.css" />
-    <link rel="stylesheet" href="/css/index.css" />
+    <link rel="stylesheet" href="/css/carousell.css" />
+    <link rel="stylesheet" href="/css/cuochi.css" />
     <link
       href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
       rel="stylesheet"
@@ -95,82 +94,39 @@
         </div>
       </ul>
     </header>
-    <section class="home" id="home">
-      <div class="home-text">
-        <h1>
-          Unisciti a noi <br />
-          e scopri <br />
-          le nostre ricette
-        </h1>
-        <p>
-          Scopri i migliori professori per ripetizioni personalizzate in tutte
-          le materie. <br />Prenota lezioni private online o in presenza e
-          migliora i tuoi risultati scolastici con l'aiuto di<br />
-          esperti qualificati.
-        </p>
-        <a href="/login" class="btn-bg-red-hover-reddish">Scopri di più</a>
-        <a href="/login" class="btn-bg-trs-hover-red">Diventa cuoco</a>
-      </div>
-      <div class="home-img">
-        <img
-          style="width: 100%; max-width: 400px"
-          src="/images/remiImg.png"
-          alt=""
-        />
-      </div>
-    </section>
 
-    <!-- <section class="about" id="about">
-      <div class="about-img">
-        <img
-          style="width: 100%; max-width: 600px"
-          src="/images/secondaImgHome.jpg"
-          alt=""
-        />
+    <section class="first-section">
+      <h2 style="font-size: 3rem; color: var(--pink)">Cuochi</h2>
+      <div th:if="${cuochi==null || cuochi.isEmpty()}">
+        Non ci sono professori nel sistema
       </div>
-      <div class="about-text">
-        <h2 style="color: #fe4e5c; font-weight: bold">Chi Siamo</h2>
-        <p>
-          Benvenuti su
+      <ul class="carousell-container">
+        <li th:each="cuoco: ${cuochi}">
           <a
-            style="
-              text-transform: uppercase;
-              font-weight: bolder;
-              color: #fe4e5c;
-            "
-            >Lezioni Expert</a
-          >, la piattaforma che connette <br />studenti con i migliori tutor
-          qualificati. Offriamo supporto <br />
-          educativo di alta qualità per soddisfare le esigenze di ogni
-          <br />studente.
-        </p>
-        <a href="/login" class="btn-bg-trs-hover-red">Scopri di più</a>
-        <a href="/login" class="btn-bg-trs-hover-red"
-          >Diventa un nostro cuoco</a
-        >
-      </div>
-    </section> -->
+            th:href="@{'/setCuocoInRicetta' + '/' + ${ricetta.id}+'/'+${cuoco.id}}"
+          >
+            <div class="carousell-widget" style="padding: 0; padding-right: 0">
+              <div class="carousell-widget-image-container">
+                <img
+                  th:src="@{'data:image/jpeg;base64,'+${cuoco.profileImage.generateBase64Image()}}"
+                  alt="immagine del cuoco"
+                />
+              </div>
+              <div class="carousell-widget-info">
+                <span style="display: flex; align-items: center; gap: 0.3rem">
+                  <i class="bx bxs-user"></i>
+                  <p th:text="${cuoco.nome} + ' ' + ${cuoco.cognome}"></p>
+                </span>
+                <span style="display: flex; align-items: center; gap: 0.3rem">
+                  <i class="bx bxs-envelope"></i>
+                  <p th:text="'email: '+${cuoco.email}"></p>
+                </span>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </section>
   </body>
-  <script>
-    console.log("hello");
-
-    const toggleMenuBtn = document.querySelector(".toggle-menu-btn");
-    const mobileMenu = document.querySelector(".mobile-menu");
-    mobileMenu.style.display = "none";
-    let isDisplayNone = true;
-
-    console.log(toggleMenuBtn);
-    console.log(mobileMenu);
-
-    toggleMenuBtn.addEventListener("click", () => {
-      console.log("pressed", isDisplayNone);
-      if (isDisplayNone) {
-        mobileMenu.style.display = "flex";
-        isDisplayNone = false;
-      } else {
-        mobileMenu.style.display = "none";
-        isDisplayNone = true;
-      }
-    });
-  </script>
+  <script src="/js/app.js"></script>
 </html>

@@ -19,6 +19,37 @@ public class ImageController {
 	@Autowired private ImageRepository imageRepository;
 	@Autowired private RicettaRepository ricettaRepository;
 	
+	@GetMapping(value="/formNewImage/{idRicetta}")
+	public String formNewImage(@PathVariable Long idRicetta,Model model) {
+		model.addAttribute("ricetta", this.ricettaRepository.findById(idRicetta).orElse(null));
+		return "formNewImage.html";
+	}
+
+	@PostMapping(value="/newImage/{idRicetta}",consumes = "multipart/form-data")
+	public String newImage(@PathVariable Long idRicetta, @RequestPart("file") MultipartFile file,Model model) {
+		Ricetta r=ricettaRepository.findById(idRicetta).orElse(null);
+		try {
+			Image i=new Image();
+			i.setImageData(file.getBytes());
+			i.setRicetta(r);
+			r.getImages().add(i);
+			this.imageRepository.save(i);
+		} catch (Exception e) {
+			System.out.println("erroreeee");
+		}
+		this.ricettaRepository.save(r);
+		model.addAttribute("ricetta", r);
+		return "redirect:/ricetta/"+r.getId();
+	}
 	
+	@GetMapping("/rimuoviImmagine/{idRicetta}/{idImmagine}")
+	public String rimuoviImmagine(@PathVariable Long idRicetta,@PathVariable Long idImmagine,Model model) {
+		Ricetta r=ricettaRepository.findById(idRicetta).orElse(null);
+		Image i=imageRepository.findById(idImmagine).orElse(null);
+		r.getImages().remove(i);
+		ricettaRepository.save(r);
+		imageRepository.delete(i);
+		return "redirect:/ricetta/"+r.getId();
+	}
 
 }
